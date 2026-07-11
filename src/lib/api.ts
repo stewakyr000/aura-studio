@@ -190,7 +190,7 @@ export async function deleteContentItem(id: string) {
 export async function listCalendarPosts(projectId: string) {
   const { data, error } = await supabase
     .from("calendar_posts")
-    .select("*, content_items(title, type, preview_url), styles:content_items(style_id)")
+    .select("*, content_items(title, type, preview_url, style_id)")
     .eq("project_id", projectId)
     .order("scheduled_for", { ascending: true, nullsFirst: false });
   if (error) throw error;
