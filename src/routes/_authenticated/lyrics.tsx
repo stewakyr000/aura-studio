@@ -146,7 +146,7 @@ function LyricRow({
   const [text, setText] = useState(line.text);
   const [ts, setTs] = useState(line.start_seconds ? formatTs(Number(line.start_seconds)) : "");
 
-  const highlighted = (line.metadata as { highlight?: boolean } | null)?.highlight === true;
+  const highlighted = false;
 
   return (
     <div>
