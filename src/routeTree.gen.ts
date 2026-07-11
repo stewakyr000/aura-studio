@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedVibesRouteImport } from './routes/_authenticated/vibes'
 import { Route as AuthenticatedUploadRouteImport } from './routes/_authenticated/upload'
 
 const AuthRoute = AuthRouteImport.update({
@@ -28,6 +29,11 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedVibesRoute = AuthenticatedVibesRouteImport.update({
+  id: '/vibes',
+  path: '/vibes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedUploadRoute = AuthenticatedUploadRouteImport.update({
   id: '/upload',
   path: '/upload',
@@ -38,10 +44,12 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
   '/upload': typeof AuthenticatedUploadRoute
+  '/vibes': typeof AuthenticatedVibesRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/upload': typeof AuthenticatedUploadRoute
+  '/vibes': typeof AuthenticatedVibesRoute
   '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
@@ -49,18 +57,20 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/upload': typeof AuthenticatedUploadRoute
+  '/_authenticated/vibes': typeof AuthenticatedVibesRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/upload'
+  fullPaths: '/' | '/auth' | '/upload' | '/vibes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/upload' | '/'
+  to: '/auth' | '/upload' | '/vibes' | '/'
   id:
     | '__root__'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/upload'
+    | '/_authenticated/vibes'
     | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
@@ -92,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/vibes': {
+      id: '/_authenticated/vibes'
+      path: '/vibes'
+      fullPath: '/vibes'
+      preLoaderRoute: typeof AuthenticatedVibesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/upload': {
       id: '/_authenticated/upload'
       path: '/upload'
@@ -104,11 +121,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedUploadRoute: typeof AuthenticatedUploadRoute
+  AuthenticatedVibesRoute: typeof AuthenticatedVibesRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedUploadRoute: AuthenticatedUploadRoute,
+  AuthenticatedVibesRoute: AuthenticatedVibesRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
