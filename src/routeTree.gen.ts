@@ -13,6 +13,7 @@ import { Route as VibesRouteImport } from './routes/vibes'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as LyricsRouteImport } from './routes/lyrics'
 import { Route as GenerateRouteImport } from './routes/generate'
+import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as IndexRouteImport } from './routes/index'
 
 const VibesRoute = VibesRouteImport.update({
@@ -35,6 +36,11 @@ const GenerateRoute = GenerateRouteImport.update({
   path: '/generate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,6 +49,7 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
   '/generate': typeof GenerateRoute
   '/lyrics': typeof LyricsRoute
   '/upload': typeof UploadRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
   '/generate': typeof GenerateRoute
   '/lyrics': typeof LyricsRoute
   '/upload': typeof UploadRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
   '/generate': typeof GenerateRoute
   '/lyrics': typeof LyricsRoute
   '/upload': typeof UploadRoute
@@ -65,14 +74,22 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/generate' | '/lyrics' | '/upload' | '/vibes'
+  fullPaths: '/' | '/calendar' | '/generate' | '/lyrics' | '/upload' | '/vibes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/generate' | '/lyrics' | '/upload' | '/vibes'
-  id: '__root__' | '/' | '/generate' | '/lyrics' | '/upload' | '/vibes'
+  to: '/' | '/calendar' | '/generate' | '/lyrics' | '/upload' | '/vibes'
+  id:
+    | '__root__'
+    | '/'
+    | '/calendar'
+    | '/generate'
+    | '/lyrics'
+    | '/upload'
+    | '/vibes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CalendarRoute: typeof CalendarRoute
   GenerateRoute: typeof GenerateRoute
   LyricsRoute: typeof LyricsRoute
   UploadRoute: typeof UploadRoute
@@ -109,6 +126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GenerateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -121,6 +145,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CalendarRoute: CalendarRoute,
   GenerateRoute: GenerateRoute,
   LyricsRoute: LyricsRoute,
   UploadRoute: UploadRoute,
