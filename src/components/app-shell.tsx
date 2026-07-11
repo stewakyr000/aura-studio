@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import {
   Sparkles,
@@ -9,7 +9,17 @@ import {
   LayoutDashboard,
   Search,
   Bell,
+  LogOut,
+  ChevronDown,
+  Check,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
+import { useCurrentProjectId } from "@/hooks/use-current-project";
+import { listProjects } from "@/lib/api";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const nav = [
   { to: "/", label: "Studio", icon: LayoutDashboard },
@@ -22,6 +32,25 @@ const nav = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [currentId, setCurrentId] = useCurrentProjectId();
+  const projectsQ = useQuery({ queryKey: ["projects"], queryFn: listProjects, enabled: !!user });
+  const projects = projectsQ.data ?? [];
+  const currentProject = projects.find((p) => p.id === currentId) ?? null;
+  const [pickerOpen, setPickerOpen] = useState(false);
+
+  // Auto-select first project if none selected
+  useEffect(() => {
+    if (!currentId && projects.length > 0) setCurrentId(projects[0].id);
+  }, [currentId, projects, setCurrentId]);
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setCurrentId(null);
+    toast.success("Signed out");
+    navigate({ to: "/auth", replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-sanctum text-foreground">
@@ -45,6 +74,55 @@ export function AppShell({ children }: { children: ReactNode }) {
                 Studio
               </div>
             </div>
+          </div>
+
+          {/* Project picker */}
+          <div className="relative mx-4 mb-2">
+            <button
+              onClick={() => setPickerOpen((v) => !v)}
+              className="flex w-full items-center justify-between rounded-lg border border-border/60 bg-card/40 px-3 py-2.5 text-left text-sm transition-colors hover:border-ember/40"
+            >
+              <div className="min-w-0">
+                <div className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground">
+                  Session
+                </div>
+                <div className="truncate font-serif text-sm">
+                  {currentProject?.title ?? "No project"}
+                </div>
+              </div>
+              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+            </button>
+            {pickerOpen && (
+              <div className="absolute left-0 right-0 top-full z-30 mt-1 rounded-lg border border-border/60 bg-card/95 py-1 backdrop-blur">
+                {projects.length === 0 ? (
+                  <div className="px-3 py-2 text-xs text-muted-foreground">
+                    No projects yet
+                  </div>
+                ) : (
+                  projects.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => {
+                        setCurrentId(p.id);
+                        setPickerOpen(false);
+                      }}
+                      className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-muted/40"
+                    >
+                      <span className="truncate">{p.title}</span>
+                      {p.id === currentId && <Check className="h-3.5 w-3.5 text-ember" />}
+                    </button>
+                  ))
+                )}
+                <div className="my-1 h-px bg-border/60" />
+                <Link
+                  to="/"
+                  onClick={() => setPickerOpen(false)}
+                  className="block px-3 py-2 text-xs uppercase tracking-[0.2em] text-ember hover:bg-muted/40"
+                >
+                  + New project
+                </Link>
+              </div>
+            )}
           </div>
 
           <nav className="flex-1 space-y-1 px-4 pt-4">
@@ -76,11 +154,22 @@ export function AppShell({ children }: { children: ReactNode }) {
 
           <div className="m-4 rounded-lg border border-border/60 bg-card/40 p-4">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-ember to-ember/40" />
-              <div className="min-w-0">
-                <div className="truncate text-sm font-medium">Nova Vale</div>
-                <div className="text-xs text-muted-foreground">Artist · Pro</div>
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-ember to-ember/40 font-serif text-sm text-background">
+                {(user?.email ?? "?").slice(0, 1).toUpperCase()}
               </div>
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-medium">
+                  {user?.email ?? "Guest"}
+                </div>
+                <div className="text-xs text-muted-foreground">Artist</div>
+              </div>
+              <button
+                onClick={signOut}
+                title="Sign out"
+                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted/40 hover:text-foreground"
+              >
+                <LogOut className="h-3.5 w-3.5" strokeWidth={1.5} />
+              </button>
             </div>
           </div>
         </aside>
