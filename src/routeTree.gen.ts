@@ -9,147 +9,67 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VibesRouteImport } from './routes/vibes'
-import { Route as UploadRouteImport } from './routes/upload'
-import { Route as LyricsRouteImport } from './routes/lyrics'
-import { Route as GenerateRouteImport } from './routes/generate'
-import { Route as CalendarRouteImport } from './routes/calendar'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 
-const VibesRoute = VibesRouteImport.update({
-  id: '/vibes',
-  path: '/vibes',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UploadRoute = UploadRouteImport.update({
-  id: '/upload',
-  path: '/upload',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LyricsRoute = LyricsRouteImport.update({
-  id: '/lyrics',
-  path: '/lyrics',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GenerateRoute = GenerateRouteImport.update({
-  id: '/generate',
-  path: '/generate',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CalendarRoute = CalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/calendar': typeof CalendarRoute
-  '/generate': typeof GenerateRoute
-  '/lyrics': typeof LyricsRoute
-  '/upload': typeof UploadRoute
-  '/vibes': typeof VibesRoute
+  '/': typeof AuthenticatedRouteRoute
+  '/auth': typeof AuthRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/calendar': typeof CalendarRoute
-  '/generate': typeof GenerateRoute
-  '/lyrics': typeof LyricsRoute
-  '/upload': typeof UploadRoute
-  '/vibes': typeof VibesRoute
+  '/': typeof AuthenticatedRouteRoute
+  '/auth': typeof AuthRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/calendar': typeof CalendarRoute
-  '/generate': typeof GenerateRoute
-  '/lyrics': typeof LyricsRoute
-  '/upload': typeof UploadRoute
-  '/vibes': typeof VibesRoute
+  '/_authenticated': typeof AuthenticatedRouteRoute
+  '/auth': typeof AuthRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calendar' | '/generate' | '/lyrics' | '/upload' | '/vibes'
+  fullPaths: '/' | '/auth'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calendar' | '/generate' | '/lyrics' | '/upload' | '/vibes'
-  id:
-    | '__root__'
-    | '/'
-    | '/calendar'
-    | '/generate'
-    | '/lyrics'
-    | '/upload'
-    | '/vibes'
+  to: '/' | '/auth'
+  id: '__root__' | '/_authenticated' | '/auth'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  CalendarRoute: typeof CalendarRoute
-  GenerateRoute: typeof GenerateRoute
-  LyricsRoute: typeof LyricsRoute
-  UploadRoute: typeof UploadRoute
-  VibesRoute: typeof VibesRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRoute
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/vibes': {
-      id: '/vibes'
-      path: '/vibes'
-      fullPath: '/vibes'
-      preLoaderRoute: typeof VibesRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/upload': {
-      id: '/upload'
-      path: '/upload'
-      fullPath: '/upload'
-      preLoaderRoute: typeof UploadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lyrics': {
-      id: '/lyrics'
-      path: '/lyrics'
-      fullPath: '/lyrics'
-      preLoaderRoute: typeof LyricsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/generate': {
-      id: '/generate'
-      path: '/generate'
-      fullPath: '/generate'
-      preLoaderRoute: typeof GenerateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/calendar': {
-      id: '/calendar'
-      path: '/calendar'
-      fullPath: '/calendar'
-      preLoaderRoute: typeof CalendarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  CalendarRoute: CalendarRoute,
-  GenerateRoute: GenerateRoute,
-  LyricsRoute: LyricsRoute,
-  UploadRoute: UploadRoute,
-  VibesRoute: VibesRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRoute,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
